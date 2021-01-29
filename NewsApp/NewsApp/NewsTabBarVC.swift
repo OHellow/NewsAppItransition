@@ -11,15 +11,13 @@ class NewsTabBarVC: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let firstVC = UINavigationController(rootViewController: ArticleVC())
-        let secondVC = SourceVC()
-        let thirdVC = SavedNewsVC()
-        firstVC.tabBarItem = UITabBarItem(title: "Article", image: UIImage(systemName:"newspaper"), tag: 0)
-        secondVC.tabBarItem = UITabBarItem(title: "Sources", image: UIImage(systemName: "server.rack"), tag: 1)
-        thirdVC.tabBarItem = UITabBarItem(title: "Saved News", image: UIImage(systemName: "bookmark.circle"), tag: 2)
-        let tabBarControllers = [firstVC, secondVC, thirdVC]
+        let firstVC = HomeVC()
+        let secondVC = ArchiveVC()
+        firstVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName:"newspaper"), tag: 0)
+        secondVC.tabBarItem = UITabBarItem(title: "Archive", image: UIImage(systemName: "bookmark.circle"), tag: 1)
+        let tabBarControllers = [firstVC, secondVC]
 
-        viewControllers = tabBarControllers//.map { UINavigationController(rootViewController: $0)}
+        viewControllers = tabBarControllers.map { UINavigationController(rootViewController: $0)}
         view.backgroundColor = .white
     }
 }

@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol HeaderDelegate {
-    func getTitles()
-}
-
 class HeaderCellView: UITableViewHeaderFooterView {
     let titleLabel = UILabel()
     let arrowLabel: UILabel = {

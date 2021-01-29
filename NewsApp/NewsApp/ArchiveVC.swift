@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class SavedNewsVC: UIViewController {
+class ArchiveVC: UIViewController {
     
     private var tableView: UITableView = {
         let tableView = UITableView()
@@ -19,30 +19,20 @@ class SavedNewsVC: UIViewController {
     }()
     
     var context = CoreDataManger.sharedInstance.context
-    var newsData = CoreDataManger.sharedInstance.newsCoreData
-//    var fetchRequest = CoreDataManger.sharedInstance.loadArticles()
-//    var fetchedResultController:NSFetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>()
+    var dataSource = CoreDataManger.sharedInstance.newsCoreData
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        fetchedResultController = getResultFetchedResultController()
-//        fetchedResultController.delegate = self
         setupView()
-        
     }
-    
-//    func getResultFetchedResultController()->NSFetchedResultsController<NSFetchRequestResult>{
-//        fetchedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-//        return fetchedResultController
-//    }
 }
 
-extension SavedNewsVC {
+extension ArchiveVC {
     func setupView() {
         view.backgroundColor = .white
         setupTableView()
         CoreDataManger.sharedInstance.loadArticles()
-        newsData = CoreDataManger.sharedInstance.newsCoreData
+        dataSource = CoreDataManger.sharedInstance.newsCoreData
         tableView.reloadData()
     }
     
@@ -58,22 +48,18 @@ extension SavedNewsVC {
     }
 }
 
-extension SavedNewsVC: UITableViewDelegate, UITableViewDataSource {
+extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //print(fetchedResultController.sections?[section].numberOfObjects)
-        //print(newsData.count)
-        return newsData.count//fetchedResultController.sections?[section].numberOfObjects ?? 0
+        return dataSource.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let news = newsData[indexPath.row]//fetchedResultController.object(at: indexPath as IndexPath) as! News
-        //let news = fetchedResultController.object(at: indexPath as IndexPath) as! News
+        let news = dataSource[indexPath.row]
         print(news)
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! ArticleTableViewCell
-        
+        cell.saveNewsButton.setImage(UIImage(systemName: "trash"), for: .normal)
         cell.buttonAction = { sender in
-            //print(indexPath.row)
-            let item = self.newsData[indexPath.row]
+            let item = self.dataSource[indexPath.row]
             
             self.context.delete(item)
             do{
@@ -81,16 +67,21 @@ extension SavedNewsVC: UITableViewDelegate, UITableViewDataSource {
             }catch _ {
             }
             CoreDataManger.sharedInstance.loadArticles()
-            self.newsData = CoreDataManger.sharedInstance.newsCoreData
+            self.dataSource = CoreDataManger.sharedInstance.newsCoreData
             tableView.reloadData()
         }
         cell.configureFromCD(model: news)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let vc = ArticleVC()
+        let savedArticle = dataSource[indexPath.row]
+        let article = Article(source: nil, author: nil, title: savedArticle.title, description: savedArticle.descriptionArticle, url: savedArticle.urlToWebsite, urlToImage: savedArticle.urlToImage, publishedAt: savedArticle.publishedAt)
+        vc.article = article
+        vc.isArticleFromSaved = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
-//extension SavedNewsVC: NSFetchedResultsControllerDelegate {
-//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        tableView.reloadData()
-//    }
-//}

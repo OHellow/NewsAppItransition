@@ -7,11 +7,7 @@
 
 import UIKit
 
-protocol CategoryProtocol {
-    func getCategory(category: String)
-}
-
-class CategoryVC: UIViewController {
+class OptionsVC: UIViewController {
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -20,6 +16,7 @@ class CategoryVC: UIViewController {
     }()
     
     var articleManager = ArticlesManager()
+    let url_constructor = URL_Constructor()
     var dataSource = [String]()
     var isSources = false
     var delegate: CategoryProtocol?
@@ -28,20 +25,24 @@ class CategoryVC: UIViewController {
         super.viewDidLoad()
         setupTableView()
         if isSources {
-            guard let url = articleManager.requestSources() else {return}
-            articleManager.getPublishers(from: url) { (publishers) in
-                for publisher in publishers {
-                    self.dataSource.append(publisher.id ?? "no info")
-                }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+            fetchSources()
+        }
+    }
+    
+    func fetchSources() {
+        guard let url = url_constructor.requestSources() else {return}
+        articleManager.getPublishers(from: url) { (publishers) in
+            for publisher in publishers {
+                self.dataSource.append(publisher.id ?? "no info")
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
             }
         }
     }
 }
 
-extension CategoryVC {
+extension OptionsVC {
     func setupTableView() {
         view.addSubview(tableView)
         tableView.dataSource = self
@@ -54,7 +55,7 @@ extension CategoryVC {
     }
 }
 
-extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
+extension OptionsVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
@@ -66,7 +67,7 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate?.getCategory(category: dataSource[indexPath.row])
+        delegate?.getOption(option: dataSource[indexPath.row])
         navigationController?.popViewController(animated: true)
     }
 }
