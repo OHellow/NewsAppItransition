@@ -19,10 +19,23 @@ class ArchiveVC: UIViewController {
     
     var context = CoreDataManger.sharedInstance.context
     var dataSource = CoreDataManger.sharedInstance.newsCoreData
+    let nc = NotificationCenter.default
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        loadArticlesFromCD()
+        nc.addObserver(self, selector: #selector(updateTableView), name: Notification.Name("ArticleSaved"), object: nil)
+    }
+    
+    func loadArticlesFromCD() {
+        CoreDataManger.sharedInstance.loadArticles()
+        dataSource = CoreDataManger.sharedInstance.newsCoreData
+        tableView.reloadData()
+    }
+    
+    @objc func updateTableView() {
+        loadArticlesFromCD()
     }
 }
 
@@ -30,9 +43,6 @@ extension ArchiveVC {
     func setupView() {
         view.backgroundColor = .white
         setupTableView()
-        CoreDataManger.sharedInstance.loadArticles()
-        dataSource = CoreDataManger.sharedInstance.newsCoreData
-        tableView.reloadData()
     }
     
     func setupTableView() {

@@ -9,24 +9,17 @@ import UIKit
 import CoreData
 
 class CoreDataManger {
-  
-  // MARK: - Properties
-  static let sharedInstance = CoreDataManger()
+    // MARK: - Properties
+    static let sharedInstance = CoreDataManger()
     
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  
-  var newsCoreData: [News] = []
-  
-  // MARK: - Lifecycle
-  
-  private init() {}
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let notificationCenter = NotificationCenter.default
+    var newsCoreData: [News] = []
     
-//    func contextHasChanged() {
-//        if context. {
-//
-//        }
-//    }
-  
+    // MARK: - Lifecycle
+    
+    private init() {}
+    
     func saveArticle(article: Article) {
         let news = News(context: context)
         news.setValue("\(article.articleDescription ?? "")", forKeyPath: "descriptionArticle")
@@ -36,8 +29,10 @@ class CoreDataManger {
         news.setValue("\(article.url ?? "")", forKeyPath: "urlToWebsite")
         
         saveContext()
+        notificationCenter.post(name: Notification.Name("ArticleSaved"), object: nil)
+        print("SAVED")
     }
-  
+    
     func loadArticles() {
         do {
             let request = News.fetchRequest() as NSFetchRequest<News>

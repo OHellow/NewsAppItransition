@@ -29,7 +29,6 @@ class CommentsVC: UIViewController {
         CoreDataManger.sharedInstance.addComment(index: newsIndex)
         tableView.reloadData()
     }
-    
 }
 
 extension CommentsVC {

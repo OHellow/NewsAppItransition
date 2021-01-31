@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -104,7 +104,6 @@
 				DAC9905BC24B677DABA609E9 /* Pods-NewsApp.debug.xcconfig */,
 				2A10A9B64B3E9902E2C41E2E /* Pods-NewsApp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -125,9 +124,8 @@
 			isa = PBXGroup;
 			children = (
 				833E86BA25B5B2EE005F4BE9 /* NetworkService.swift */,
-				833E86D425B5E4D3005F4BE9 /* ImageView+DownloadImage.swift */,
 				83E7597025C49658002140CE /* URL_Constructor.swift */,
-				832D237825C723E700BECA1C /* PhotoOperations.swift */,
+				832D238025C757D700BECA1C /* DownloadImage */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -144,6 +142,15 @@
 				8339DE4125ADE41500817024 /* OnboardingVC */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		832D238025C757D700BECA1C /* DownloadImage */ = {
+			isa = PBXGroup;
+			children = (
+				833E86D425B5E4D3005F4BE9 /* ImageView+DownloadImage.swift */,
+				832D237825C723E700BECA1C /* PhotoOperations.swift */,
+			);
+			path = DownloadImage;
 			sourceTree = "<group>";
 		};
 		8339DE2025ADE3CD00817024 = {

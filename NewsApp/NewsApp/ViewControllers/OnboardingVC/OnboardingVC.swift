@@ -40,10 +40,10 @@ class OnboardingVC: UIViewController {
     
     var collectionView: UICollectionView!
     //MARK: Properties
-    let pages = [ Page(imageName: "no image", text: "Welcome to ITRA-News!"),
-                  Page(imageName: "firstImage", text: "Choose topic for search"),
-                  Page(imageName: "secndImage", text: "Browse through topic options"),
-                  Page(imageName: "thirdImage", text: "Save articles and comment them")
+    let pages = [ Page(imageName: "no image", text: "Welcome to ITRAN-News!"),
+                  Page(imageName: "firstImage", text: "Choose topic for search. Browse through several categories "),
+                  Page(imageName: "secondImage", text: "Click on article for more info. Share it with your friends"),
+                  Page(imageName: "thirdImage", text: "Save articles and add notes to them")
     ]
     //MARK: Life cycle
     override func viewDidLoad() {

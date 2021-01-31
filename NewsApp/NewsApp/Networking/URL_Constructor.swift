@@ -16,7 +16,7 @@ class URL_Constructor {
 
     let sortBy = URLQueryItem(name: "sortBy", value: SortOptions.publishedAt.rawValue)
 
-    let secretAPIKey = URLQueryItem(name: "apiKey", value: "54bf385a589f4134b70b269e2abe9974")
+    let secretAPIKey = URLQueryItem(name: "apiKey", value: Constants.apiKey)
     
     func requestNews(endpoint: Endpoint,
                      country: String? = nil,

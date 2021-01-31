@@ -55,10 +55,11 @@ class PageCell: UICollectionViewCell {
         imageContainerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.5).isActive = true
         imageContainerView.addSubview(imageView)
         imageView.centerXAnchor.constraint(equalTo: imageContainerView.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: imageContainerView.centerYAnchor).isActive = true
+        //imageView.centerYAnchor.constraint(equalTo: imageContainerView.centerYAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: -12).isActive = true
         imageView.heightAnchor.constraint(equalTo: imageContainerView.heightAnchor, multiplier: 0.5).isActive = true
         addSubview(descriptionTextView)
-        descriptionTextView.topAnchor.constraint(equalTo: imageContainerView.bottomAnchor).isActive = true
+        descriptionTextView.topAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: 24).isActive = true
         descriptionTextView.leftAnchor.constraint(equalTo: leftAnchor, constant: 24).isActive = true
         descriptionTextView.rightAnchor.constraint(equalTo: rightAnchor, constant: -24).isActive = true
         descriptionTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0).isActive = true
