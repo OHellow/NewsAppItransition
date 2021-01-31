@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AlamofireImage
 
 class ArticleTableViewCell: UITableViewCell {
 
@@ -53,7 +54,7 @@ class ArticleTableViewCell: UITableViewCell {
         return button
     }()
     //MARK: Properties
-    private lazy var imageViewHeight: NSLayoutConstraint = newsImageView.heightAnchor.constraint(equalToConstant: 0)
+    private lazy var imageViewHeight: NSLayoutConstraint = newsImageView.heightAnchor.constraint(equalToConstant: 150)
     var buttonAction: (() -> Void)?
     var buttonCommentAction: (() -> Void)?
     
@@ -127,9 +128,13 @@ class ArticleTableViewCell: UITableViewCell {
         dateLabel.text = Date.ptBRFormatter.string(from: model.publishedAt ?? Date())
         titleLabel.text = model.title ?? "no info"
         descriptionLabel.text = model.articleDescription
+        self.imageViewHeight.constant = 150
         if let url = model.urlToImage {
-            self.imageViewHeight.constant = 150
-            newsImageView.downloadImage(from: url)
+            if let url = URL(string: url) {
+                newsImageView.af.setImage(withURL: url, placeholderImage: UIImage(named: "Placeholder"))
+            }
+        } else {
+            newsImageView.image = UIImage(named: "Placeholder")
         }
     }
     
@@ -140,7 +145,7 @@ class ArticleTableViewCell: UITableViewCell {
         titleLabel.text = model.title
         descriptionLabel.text = model.descriptionArticle
         if let url = model.urlToImage {
-                    self.imageViewHeight.constant = 150
+            self.imageViewHeight.constant = 150
             newsImageView.downloadImage(from: url)
         }
     }

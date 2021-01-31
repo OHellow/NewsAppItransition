@@ -23,7 +23,7 @@ class NetworkService {
     
     func parseArticles(_ data: Data) -> [Article]? {
         do {
-            let rawFeed = try decoder.decode(NewsSource.self, from: data)
+            let rawFeed = try decoder.decode(NewsResponse.self, from: data)
             //print("TOTAL",rawFeed.totalResults)
             return rawFeed.articles
         } catch let decodeError as NSError {

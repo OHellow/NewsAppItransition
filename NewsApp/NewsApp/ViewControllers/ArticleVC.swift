@@ -71,6 +71,4 @@ class ArticleVC: UIViewController {
         activityViewController.popoverPresentationController?.sourceView = self.view
         self.present(activityViewController, animated: true, completion: nil)
     }
-    
-
 }
