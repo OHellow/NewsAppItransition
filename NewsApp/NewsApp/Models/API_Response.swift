@@ -17,16 +17,16 @@ struct Article: Codable {
     let source: Source?
     let author: String?
     let title: String?
-    let description: String?
+    let articleDescription: String?
     let url: String?
     let urlToImage: String?
     let publishedAt: Date?
-    
+
     enum CodingKeys: String, CodingKey {
         case source
         case author
         case title
-        case description
+        case articleDescription = "description"
         case url
         case urlToImage
         case publishedAt
@@ -37,6 +37,7 @@ struct Source: Codable {
     let id: String?
     let name: String?
 }
+
 
 
 

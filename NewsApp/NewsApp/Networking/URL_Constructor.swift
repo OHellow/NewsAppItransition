@@ -48,6 +48,7 @@ class URL_Constructor {
             url?.queryItems?.append(page)
         }
         url?.queryItems?.append(secretAPIKey)
+        print("URL",url?.url)
         return url?.url
     }
     

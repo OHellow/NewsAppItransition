@@ -50,12 +50,20 @@ class ArticleVC: UIViewController {
         navigationItem.setRightBarButtonItems(buttons, animated: true)
     }
     
+    func loadRequest() {
+        guard let urlString = article?.url, let url = URL(string: urlString) else {return}
+        let request = URLRequest(url: url)
+        articlePage.load(request)
+    }
+    
     @objc func saveArticle() {
-        print(1)
+        //print(1)
+        guard let article = self.article else {return}
+        CoreDataManger.sharedInstance.saveArticle(article: article)
     }
     
     @objc func shareArticle() {
-        print(2)
+        //print(2)
         guard let urlString = article?.url, let urlFromArticle = URL(string: urlString) else {return}
         let url = urlFromArticle
         let textShare = [url]
@@ -64,9 +72,5 @@ class ArticleVC: UIViewController {
         self.present(activityViewController, animated: true, completion: nil)
     }
     
-    func loadRequest() {
-        guard let urlString = article?.url, let url = URL(string: urlString) else {return}
-        let request = URLRequest(url: url)
-        articlePage.load(request)
-    }
+
 }

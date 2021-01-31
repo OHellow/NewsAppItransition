@@ -8,7 +8,6 @@
 import UIKit
 
 class NewsTabBarVC: UITabBarController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         let firstVC = HomeVC()

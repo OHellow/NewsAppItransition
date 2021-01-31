@@ -7,17 +7,17 @@
 
 import UIKit
 
-protocol CategoryProtocol {
+protocol GetOptionProtocol {
     func getOption(option: String)
 }
 
-extension HomeVC: CategoryProtocol {
+extension HomeVC: GetOptionProtocol {
     func getOption(option: String) {
         print(option)
         switch segmentedControl.selectedSegmentIndex {
-        case 2:
+        case Options.category.rawValue:
             self.category = option
-        case 3:
+        case Options.source.rawValue:
             self.source = option
         default:
             self.country = option

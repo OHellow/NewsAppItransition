@@ -8,6 +8,6 @@
 import Foundation
 
 struct Constants {
-    static let categories = ["business", "entertainment","general","health","science","sports", "technilogy"]
+    static let categories = ["business", "entertainment","general","health","science","sports", "technology"]
     static let countries = ["ae", "at", "pl", "ru", "us"]
 }

@@ -126,7 +126,7 @@ class ArticleTableViewCell: UITableViewCell {
     func configure(model: Article) {
         dateLabel.text = Date.ptBRFormatter.string(from: model.publishedAt ?? Date())
         titleLabel.text = model.title ?? "no info"
-        descriptionLabel.text = model.description
+        descriptionLabel.text = model.articleDescription
         if let url = model.urlToImage {
             self.imageViewHeight.constant = 150
             newsImageView.downloadImage(from: url)

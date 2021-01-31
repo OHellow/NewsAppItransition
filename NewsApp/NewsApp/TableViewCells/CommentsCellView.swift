@@ -13,7 +13,7 @@ class CommentsCellView: UITableViewCell {
          textView.translatesAutoresizingMaskIntoConstraints = false
          textView.text = "New Comment"
          textView.textAlignment = .left
-         textView.backgroundColor = .red
+         textView.backgroundColor = .white
          textView.isEditable = true
          return textView
      }()
@@ -37,6 +37,15 @@ class CommentsCellView: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        textView.layer.cornerRadius = 5
+        textView.layer.borderWidth = 1
+        textView.layer.borderColor = UIColor.gray.cgColor
+        textView.clipsToBounds = false
+//        textView.layer.shadowOpacity = 0.4
+//        textView.layer.shadowOffset = CGSize(width: 1, height: 1)
     }
         
     func setupView() {

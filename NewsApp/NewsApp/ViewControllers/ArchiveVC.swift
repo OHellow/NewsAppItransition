@@ -9,7 +9,6 @@ import UIKit
 import CoreData
 
 class ArchiveVC: UIViewController {
-    
     private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ArticleTableViewCell.self, forCellReuseIdentifier: "cell2")
@@ -25,11 +24,6 @@ class ArchiveVC: UIViewController {
         super.viewDidLoad()
         setupView()
     }
-    
-//    @objc func pressCommentsButton() {
-//        let vc = CommentsVC()
-//        navigationController?.pushViewController(vc, animated: true)
-//    }
 }
 
 extension ArchiveVC {
@@ -89,7 +83,7 @@ extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = ArticleVC()
         let savedArticle = dataSource[indexPath.row]
-        let article = Article(source: nil, author: nil, title: savedArticle.title, description: savedArticle.descriptionArticle, url: savedArticle.urlToWebsite, urlToImage: savedArticle.urlToImage, publishedAt: savedArticle.publishedAt)
+        let article = Article(source: nil, author: nil, title: savedArticle.title, articleDescription: savedArticle.descriptionArticle, url: savedArticle.urlToWebsite, urlToImage: savedArticle.urlToImage, publishedAt: savedArticle.publishedAt)
         vc.article = article
         vc.isArticleFromSaved = true
         navigationController?.pushViewController(vc, animated: true)

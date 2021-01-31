@@ -19,7 +19,7 @@ class OptionsVC: UIViewController {
     let url_constructor = URL_Constructor()
     var dataSource = [String]()
     var isSources = false
-    var delegate: CategoryProtocol?
+    var delegate: GetOptionProtocol?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +52,7 @@ extension OptionsVC {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.tableFooterView = UIView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true

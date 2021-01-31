@@ -21,7 +21,7 @@ class HomeVC: UIViewController {
     let switchTopHeadlines: UISwitch = {
         let _switch = UISwitch()
         _switch.translatesAutoresizingMaskIntoConstraints = false
-        _switch.isOn = true
+        _switch.isOn = false
         return _switch
     }()
     
@@ -46,9 +46,9 @@ class HomeVC: UIViewController {
     var country: String = {
         let locale = Locale.current.regionCode
         let country = locale
-        return country ?? "us"
+        return country?.lowercased() ?? "us"
     }()
-    var source: String = "bbc-news"
+    var source: String = "wired"
     var endpoint: Endpoint = .topHeadLines
     lazy var headerTitle: String = {
         var str = String()
@@ -77,39 +77,6 @@ class HomeVC: UIViewController {
         navigationItem.title = "news"
     }
     //MARK: Methods
-    func downloadNews(endpoint: Endpoint,
-                      country: String? = nil,
-                      category: String? = nil,
-                      source: String? = nil,
-                      filter: String? = nil,
-                      page: String? = nil) {
-        guard let url = url_constructor.requestNews(endpoint: endpoint,
-                                                   country: country,
-                                                   category: category,
-                                                   source: source,
-                                                   filter: filter,
-                                                   page: page) else {return}
-        //print(url)
-        articleManager.fetchArticles(from: url) { (result) in
-            switch result {
-            case .success(let articles):
-                DispatchQueue.global().async {
-                    //print(articles.count)
-                    if articles.count == 0 {
-                        self.noAvaiableNews = true
-                    }
-                    self.dataSource.append(contentsOf: articles)
-                    self.isSearching = false
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                }
-            case .failure(.networkingError):
-                print("ERROR")
-            }
-        }
-    }
-    
     func setupOptionsAndFetchNews() {
         if segmentedControl.selectedSegmentIndex == Options.search.rawValue {
             switchView.isHidden = true
@@ -133,7 +100,11 @@ class HomeVC: UIViewController {
                 switchView.isHidden = false
                 navigationItem.searchController = nil
                 self.headerTitle = source
-                self.endpoint = .topHeadLines
+                if switchTopHeadlines.isOn {
+                    endpoint = .topHeadLines
+                } else {
+                    self.endpoint = .everything
+                }
                 _source = source
             default:
                 switchView.isHidden = true
@@ -142,14 +113,45 @@ class HomeVC: UIViewController {
                 self.endpoint = .topHeadLines
                 _country = country
             }
-            if switchTopHeadlines.isOn {
-                endpoint = .topHeadLines
-            }
+            
             page = 1
             self.noAvaiableNews = false
             dataSource.removeAll()
             tableView.reloadData()
             downloadNews(endpoint: endpoint, country: _country, category: _category, source: _source, page: String(page))
+        }
+    }
+    
+    func downloadNews(endpoint: Endpoint,
+                      country: String? = nil,
+                      category: String? = nil,
+                      source: String? = nil,
+                      filter: String? = nil,
+                      page: String? = nil) {
+        guard let url = url_constructor.requestNews(endpoint: endpoint,
+                                                    country: country,
+                                                    category: category,
+                                                    source: source,
+                                                    filter: filter,
+                                                    page: page) else {return}
+        //print(url)
+        articleManager.fetchArticles(from: url) { (result) in
+            switch result {
+            case .success(let articles):
+                DispatchQueue.global().async {
+                    //print(articles.count)
+                    if articles.count == 0 {
+                        self.noAvaiableNews = true
+                    }
+                    self.dataSource.append(contentsOf: articles)
+                    self.isSearching = false
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            case .failure(.networkingError):
+                print("ERROR")
+            }
         }
     }
     //MARK: Selectors
@@ -161,7 +163,7 @@ class HomeVC: UIViewController {
         setupOptionsAndFetchNews()
     }
 }
-//MARK: SetupView
+//MARK: Setup View Layout
 extension HomeVC {
     func setupView() {
         view.backgroundColor = .white
@@ -183,7 +185,6 @@ extension HomeVC {
         segmentedControl.addTarget(self, action: #selector(changeNews(sender:)), for: .valueChanged)
         view.addSubview(switchView)
         switchView.sizeToFit()
-        switchView.backgroundColor = .green
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.alignment = .fill
@@ -222,79 +223,12 @@ extension HomeVC {
         tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
     }
 }
-//MARK: TableView methods
-extension HomeVC: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        let searchOption = Options.search.rawValue
-        return segmentedControl.selectedSegmentIndex != searchOption ? 44 : 0
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header") as? HeaderCellView ?? HeaderCellView(reuseIdentifier: "header")
-        header.titleLabel.text = headerTitle
-        header.delegate = self
-        return header
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ArticleTableViewCell
-        let model = dataSource[indexPath.row]
-        cell.buttonAction = {
-            //print(indexPath.row)
-            let article = self.dataSource[indexPath.row]
-            CoreDataManger.sharedInstance.saveArticle(article: article)
-            }
-        cell.configure(model: model)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        //print(0)
-        let vc = ArticleVC()
-        vc.article = dataSource[indexPath.row]
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let lastElement = dataSource.count - 1
-        if !isSearching && noAvaiableNews == false && indexPath.row == lastElement {
-            requestMoreNews()
-        }
-    }
-}
-
+//MARK: SearchBar Delegate
 extension HomeVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let searchBar = searchController.searchBar
         guard let filter = searchBar.text else {return}
         self.filter = filter
         downloadNews(endpoint: .everything, filter: filter, page: String(page))
-    }
-}
-
-extension HomeVC {
-    func requestMoreNews() {
-            page += 1
-            print("PAGE NUMBER \(page)")
-            requestNews()
-    }
-    
-    func requestNews() {
-        isSearching = true
-        switch segmentedControl.selectedSegmentIndex {
-        case 1:
-            downloadNews(endpoint: endpoint, filter: filter, page: String(page))
-        case 2:
-            downloadNews(endpoint: endpoint, category: category, page: String(page))
-        case 3:
-            downloadNews(endpoint: endpoint, source: source, page: String(page))
-        default:
-            downloadNews(endpoint: endpoint, country: country, page: String(page))
-        }
     }
 }

@@ -16,9 +16,9 @@ extension HomeVC: HeaderDelegate {
         let vc = OptionsVC()
         vc.delegate = self
         switch segmentedControl.selectedSegmentIndex {
-        case 2:
+        case Options.category.rawValue:
             vc.dataSource = Constants.categories
-        case 3:
+        case Options.source.rawValue:
             vc.isSources = true
         default:
             vc.dataSource = Constants.countries

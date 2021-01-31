@@ -13,7 +13,8 @@ extension Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .medium
-        dateFormatter.locale = Locale(identifier: "en_US")
+        let identifier = Locale.current.identifier
+        dateFormatter.locale = Locale(identifier: identifier)
         return dateFormatter
     }
     

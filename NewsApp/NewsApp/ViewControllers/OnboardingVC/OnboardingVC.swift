@@ -8,9 +8,7 @@
 import UIKit
 
 class OnboardingVC: UIViewController {
-    
-    var collectionView: UICollectionView!
-    
+    //MARK: View items
     private let previousButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("PREV", for: .normal)
@@ -40,19 +38,21 @@ class OnboardingVC: UIViewController {
         return pc
     }()
     
-    let pages = [ Page(imageName: "no image", text: "Welcome to Consunet!"),
-                  Page(imageName: "firstImage", text: "Step 1. Choose the category"),
-                  Page(imageName: "secndImage", text: "Step 2. Search for your product"),
-                  Page(imageName: "thirdImage", text: "Step 3. Fill the order data and click on Send button")
+    var collectionView: UICollectionView!
+    //MARK: Properties
+    let pages = [ Page(imageName: "no image", text: "Welcome to ITRA-News!"),
+                  Page(imageName: "firstImage", text: "Choose topic for search"),
+                  Page(imageName: "secndImage", text: "Browse through topic options"),
+                  Page(imageName: "thirdImage", text: "Save articles and comment them")
     ]
-    
+    //MARK: Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         createView()
         createControlStack()
-        self.overrideUserInterfaceStyle = .light
+        //self.overrideUserInterfaceStyle = .light
     }
-    
+    //MARK: Selectors
     @objc private func handleNext() {
         let nextIndex = min(pageControl.currentPage + 1, pages.count - 1)
         let indexPath = IndexPath(item: nextIndex, section: 0)
@@ -79,7 +79,7 @@ class OnboardingVC: UIViewController {
         pageControl.currentPage = Int(x / view.frame.width)
     }
 }
-
+    //MARK: Setup View Layout
 extension OnboardingVC {
     func createView() {
         let layout = UICollectionViewFlowLayout()
@@ -111,7 +111,7 @@ extension OnboardingVC {
         controlStack.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
 }
-
+    //MARK: Collection Deleagte methods
 extension OnboardingVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pages.count

@@ -36,6 +36,7 @@ extension CommentsVC {
     func setupTableView() {
         view.addSubview(tableView)
         tableView.dataSource = self
+        tableView.tableFooterView = UIView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
