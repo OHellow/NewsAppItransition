@@ -17,7 +17,6 @@ class HeaderCellView: UITableViewHeaderFooterView {
     }()
     
     var delegate: HeaderDelegate?
-//    var presenter: ArticleVC?
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -36,7 +35,6 @@ class HeaderCellView: UITableViewHeaderFooterView {
         titleLabel.textColor = UIColor.white
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.topAnchor.constraint(equalTo: marginGuide.topAnchor).isActive = true
-        //titleLabel.trailingAnchor.constraint(equalTo: marginGuide.trailingAnchor).isActive = true
         titleLabel.bottomAnchor.constraint(equalTo: marginGuide.bottomAnchor).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: marginGuide.leadingAnchor).isActive = true
         
@@ -48,11 +46,6 @@ class HeaderCellView: UITableViewHeaderFooterView {
     }
     
     @objc func tapHeader(_ gestureRecognizer: UITapGestureRecognizer) {
-        guard let cell = gestureRecognizer.view as? HeaderCellView else {
-            return
-        }
-//        let vc = CategoryVC()
-//        presenter?.navigationController?.pushViewController(vc, animated: true)
         delegate?.getTitles()
     }
 }

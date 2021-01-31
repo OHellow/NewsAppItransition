@@ -59,7 +59,7 @@ class HomeVC: UIViewController {
     var isSearching: Bool = false
     var noAvaiableNews = false
     
-    let articleManager = ArticlesManager()
+    let articleManager = NetworkService()
     let url_constructor = URL_Constructor()
     var dataSource = [Article]()
 
@@ -90,17 +90,22 @@ class HomeVC: UIViewController {
                                                    filter: filter,
                                                    page: page) else {return}
         //print(url)
-        articleManager.getResults(from: url) { (articles) in
-            DispatchQueue.global().async {
-                //print(articles.count)
-                if articles.count == 0 {
-                    self.noAvaiableNews = true
+        articleManager.fetchArticles(from: url) { (result) in
+            switch result {
+            case .success(let articles):
+                DispatchQueue.global().async {
+                    //print(articles.count)
+                    if articles.count == 0 {
+                        self.noAvaiableNews = true
+                    }
+                    self.dataSource.append(contentsOf: articles)
+                    self.isSearching = false
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                 }
-                self.dataSource.append(contentsOf: articles)
-                self.isSearching = false
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+            case .failure(.networkingError):
+                print("ERROR")
             }
         }
     }
@@ -118,30 +123,30 @@ class HomeVC: UIViewController {
             var _category: String? = nil
             var _source: String? = nil
             switch segmentedControl.selectedSegmentIndex {
-            case 2:
+            case Options.category.rawValue:
                 switchView.isHidden = true
                 navigationItem.searchController = nil
-                headerTitle = category
-                endpoint = .topHeadLines
+                self.headerTitle = category
+                self.endpoint = .topHeadLines
                 _category = category
-            case 3:
+            case Options.source.rawValue:
                 switchView.isHidden = false
                 navigationItem.searchController = nil
-                headerTitle = source
-                endpoint = .topHeadLines
+                self.headerTitle = source
+                self.endpoint = .topHeadLines
                 _source = source
             default:
                 switchView.isHidden = true
                 navigationItem.searchController = nil
-                headerTitle = country
-                endpoint = .topHeadLines
+                self.headerTitle = country
+                self.endpoint = .topHeadLines
                 _country = country
             }
             if switchTopHeadlines.isOn {
                 endpoint = .topHeadLines
             }
             page = 1
-            noAvaiableNews = false
+            self.noAvaiableNews = false
             dataSource.removeAll()
             tableView.reloadData()
             downloadNews(endpoint: endpoint, country: _country, category: _category, source: _source, page: String(page))
@@ -220,7 +225,8 @@ extension HomeVC {
 //MARK: TableView methods
 extension HomeVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return segmentedControl.selectedSegmentIndex != 1 ? 44 : 0
+        let searchOption = Options.search.rawValue
+        return segmentedControl.selectedSegmentIndex != searchOption ? 44 : 0
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -237,7 +243,7 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ArticleTableViewCell
         let model = dataSource[indexPath.row]
-        cell.buttonAction = { sender in
+        cell.buttonAction = {
             //print(indexPath.row)
             let article = self.dataSource[indexPath.row]
             CoreDataManger.sharedInstance.saveArticle(article: article)
@@ -248,7 +254,7 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print(0)
+        //print(0)
         let vc = ArticleVC()
         vc.article = dataSource[indexPath.row]
         navigationController?.pushViewController(vc, animated: true)
@@ -263,7 +269,6 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension HomeVC: UISearchBarDelegate {
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let searchBar = searchController.searchBar
         guard let filter = searchBar.text else {return}

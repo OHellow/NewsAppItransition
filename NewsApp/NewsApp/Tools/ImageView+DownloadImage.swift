@@ -9,10 +9,8 @@ import Foundation
 import UIKit
 
 extension UIImageView {
-
-    
-    func downloadImage(from urlString: String) { //downloads image(2)
-        let cache   = NSCache<NSString, UIImage>()
+    func downloadImage(from urlString: String) {
+        let cache = NSCache<NSString, UIImage>()
         let cacheKey = NSString(string: urlString) //creates cacheKey to store in image variable
         
         if let image = cache.object(forKey: cacheKey) {
@@ -23,7 +21,6 @@ extension UIImageView {
         guard let url = URL(string: urlString) else { return }
         
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            //check for errors
             guard let self = self else { return }
             if error != nil { return }
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else { return }
@@ -35,7 +32,6 @@ extension UIImageView {
             DispatchQueue.main.async {
                 self.image = image
             }
-            //shows image on main thread
         }
         
         task.resume()

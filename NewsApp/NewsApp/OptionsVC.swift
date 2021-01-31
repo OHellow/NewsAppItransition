@@ -15,7 +15,7 @@ class OptionsVC: UIViewController {
         return tableView
     }()
     
-    var articleManager = ArticlesManager()
+    var articleManager = NetworkService()
     let url_constructor = URL_Constructor()
     var dataSource = [String]()
     var isSources = false
@@ -31,12 +31,17 @@ class OptionsVC: UIViewController {
     
     func fetchSources() {
         guard let url = url_constructor.requestSources() else {return}
-        articleManager.getPublishers(from: url) { (publishers) in
-            for publisher in publishers {
-                self.dataSource.append(publisher.id ?? "no info")
-            }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+        articleManager.fetchSources(from: url) { (result) in
+            switch result {
+            case .success(let publishers):
+                for publisher in publishers {
+                    self.dataSource.append(publisher.id ?? "no info")
+                }
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            case .failure(.networkingError):
+                print("ERROR")
             }
         }
     }

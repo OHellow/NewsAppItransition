@@ -25,6 +25,11 @@ class ArchiveVC: UIViewController {
         super.viewDidLoad()
         setupView()
     }
+    
+//    @objc func pressCommentsButton() {
+//        let vc = CommentsVC()
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
 }
 
 extension ArchiveVC {
@@ -58,7 +63,8 @@ extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
         print(news)
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! ArticleTableViewCell
         cell.saveNewsButton.setImage(UIImage(systemName: "trash"), for: .normal)
-        cell.buttonAction = { sender in
+        cell.commentsButton.isHidden = false
+        cell.buttonAction = {  
             let item = self.dataSource[indexPath.row]
             
             self.context.delete(item)
@@ -69,6 +75,11 @@ extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
             CoreDataManger.sharedInstance.loadArticles()
             self.dataSource = CoreDataManger.sharedInstance.newsCoreData
             tableView.reloadData()
+        }
+        cell.buttonCommentAction = {
+            let vc = CommentsVC()
+            vc.newsIndex = indexPath.row
+            self.navigationController?.pushViewController(vc, animated: true)
         }
         cell.configureFromCD(model: news)
         return cell

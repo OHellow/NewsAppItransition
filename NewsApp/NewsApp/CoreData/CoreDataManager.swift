@@ -16,25 +16,20 @@ class CoreDataManger {
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
   
   var newsCoreData: [News] = []
-  //var article = Article()
   
   // MARK: - Lifecycle
   
   private init() {}
   
   // MARK: - Core Data Saving support
-  
-  /// Saves an ArticlesData object as a News object
   func saveArticle(article: Article) {
-    
-    // Create an new 'News' object
     let news = News(context: context)
     news.setValue("\(article.description ?? "")", forKeyPath: "descriptionArticle")
     news.setValue(article.publishedAt, forKeyPath: "publishedAt")
     news.setValue("\(article.title ?? "")", forKeyPath: "title")
     news.setValue("\(article.urlToImage ?? "")", forKeyPath: "urlToImage")
     news.setValue("\(article.url ?? "")", forKeyPath: "urlToWebsite")
-    // Save to CoreData
+
     do {
       try context.save()
         print("CORE DATA SAVED")
@@ -43,11 +38,9 @@ class CoreDataManger {
     }
   }
   
-    func loadArticles() {//-> NSFetchRequest<NSFetchRequestResult>{
-         //let fetchRequest =  NSFetchRequest<NSFetchRequestResult>(entityName: "News")
+    func loadArticles() {
         do {
          let request = News.fetchRequest() as NSFetchRequest<News>
-         //fetchRequest.fetchLimit = newsCoreData.count
 
          let sortDescriptor = NSSortDescriptor(key: "publishedAt", ascending: true)
         request.sortDescriptors = [sortDescriptor]
@@ -59,15 +52,39 @@ class CoreDataManger {
         }
     }
     
-  /// Prints the Core Data path and can be viewed in Finder
-  func printCoreDataDBPath() {
-    let path = FileManager
-      .default
-      .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-      .last?
-      .absoluteString
-      .replacingOccurrences(of: "file://", with: "")
-      .removingPercentEncoding
-    print("Core Data DB Path: \(path ?? "Not found")")
-  }
+    func addComment(index: Int) {
+        let news = newsCoreData[index]
+        let comment = Comment(context: context)
+        
+        news.addToComments(comment)
+        
+        do {
+          try context.save()
+            print("CORE DATA SAVED")
+        } catch let error {
+          print("Failed to create Person: \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteComment(index: Int, comment: Comment) {
+        let news = newsCoreData[index]
+        
+        news.removeFromComments(comment)
+        
+        do {
+          try context.save()
+        } catch let error {
+          print("Failed to create Person: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateCommentText(text: String, comment: Comment) {
+        comment.setValue(text, forKeyPath: "text")
+
+        do {
+          try context.save()
+        } catch let error {
+          print("Failed to create Person: \(error.localizedDescription)")
+        }
+    }
 }

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Comment" representedClassName="Comment" syncable="YES">
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <relationship name="news" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="News" inverseName="comments" inverseEntity="News"/>
+    </entity>
     <entity name="News" representedClassName="News" syncable="YES">
         <attribute name="descriptionArticle" optional="YES" attributeType="String"/>
         <attribute name="publishedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="urlToImage" optional="YES" attributeType="String"/>
         <attribute name="urlToWebsite" optional="YES" attributeType="String"/>
+        <relationship name="comments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Comment" inverseName="news" inverseEntity="Comment"/>
     </entity>
     <elements>
-        <element name="News" positionX="-63" positionY="-18" width="128" height="104"/>
+        <element name="News" positionX="-63" positionY="-18" width="128" height="119"/>
+        <element name="Comment" positionX="-63" positionY="18" width="128" height="59"/>
     </elements>
 </model>

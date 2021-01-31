@@ -1,5 +1,5 @@
 //
-//  News+CoreDataClass.swift
+//  Comment+CoreDataClass.swift
 //  NewsApp
 //
 //  Created by Satsishur on 30.01.2021.
@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(News)
-public class News: NSManagedObject {
+@objc(Comment)
+public class Comment: NSManagedObject {
 
 }

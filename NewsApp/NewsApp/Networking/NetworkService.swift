@@ -11,7 +11,7 @@ enum SearchForNewsError: Error {
     case networkingError
 }
 
-class ArticlesManager {      
+class NetworkService {      
     let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -21,7 +21,7 @@ class ArticlesManager {
     var errorMessage = ""
     var articles = [Article]()
     
-    func parseData(_ data: Data) -> [Article]? {
+    func parseArticles(_ data: Data) -> [Article]? {
         do {
             let rawFeed = try decoder.decode(NewsSource.self, from: data)
             //print("TOTAL",rawFeed.totalResults)
@@ -33,15 +33,18 @@ class ArticlesManager {
         }
     }
     
-    func getResults(from url: URL, completion: @escaping ([Article]) -> ()) {
+    func fetchArticles(from url: URL, completion: @escaping ((Result<[Article], SearchForNewsError>)) -> ()) {
         URLSession.shared.dataTask(with: url) { (data, response, error ) in
             guard let data = data else { return }
-            let articles = self.parseData(data)
-            completion(articles ?? [])
+            if let articles = self.parseArticles(data) {
+            completion(.success(articles))
+            } else {
+                completion(.failure(.networkingError))
+            }
         }.resume()
     }
     
-    func parsePublishers(_ data: Data) -> [Sources]? {
+    func parseSources(_ data: Data) -> [Sources]? {
         do {
             let rawFeed = try decoder.decode(NewsPublishers.self, from: data)
             return rawFeed.sources
@@ -50,11 +53,15 @@ class ArticlesManager {
             return []
         }
     }
-    func getPublishers(from url: URL, completion: @escaping ([Sources]) -> ()) {
+    
+    func fetchSources(from url: URL, completion: @escaping ((Result<[Sources], SearchForNewsError>)) -> ()) {
         URLSession.shared.dataTask(with: url) { (data, response, error ) in
             guard let data = data else { return }
-            let articles = self.parsePublishers(data)
-            completion(articles ?? [])
+            if let sources = self.parseSources(data) {
+                completion(.success(sources))
+            } else {
+                completion(.failure(.networkingError))
+            }
         }.resume()
     }
     

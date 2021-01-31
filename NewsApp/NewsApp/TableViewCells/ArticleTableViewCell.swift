@@ -43,15 +43,26 @@ class ArticleTableViewCell: UITableViewCell {
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
+    
+    var commentsButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "bubble.left"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.isHidden = true
+        return button
+    }()
     //MARK: Properties
     private lazy var imageViewHeight: NSLayoutConstraint = newsImageView.heightAnchor.constraint(equalToConstant: 0)
-    var buttonAction: ((Any) -> Void)?
+    var buttonAction: (() -> Void)?
+    var buttonCommentAction: (() -> Void)?
     
     //MARK: Life cycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
-        saveNewsButton.addTarget(self, action: #selector(buttonPressed(sender:)), for: .touchUpInside)
+        saveNewsButton.addTarget(self, action: #selector(pressRightBUtton), for: .touchUpInside)
+        commentsButton.addTarget(self, action: #selector(pressDeleteButton), for: .touchUpInside)
      }
     
     required init?(coder: NSCoder) {
@@ -69,6 +80,7 @@ class ArticleTableViewCell: UITableViewCell {
         contentView.addSubview(newsImageView)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(saveNewsButton)
+        contentView.addSubview(commentsButton)
     }
     
     func setupConstraints() {
@@ -83,6 +95,11 @@ class ArticleTableViewCell: UITableViewCell {
         saveNewsButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8).isActive = true
         saveNewsButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         saveNewsButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
+        commentsButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
+        commentsButton.rightAnchor.constraint(equalTo: saveNewsButton.leftAnchor, constant: -8).isActive = true
+        commentsButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        commentsButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 4).isActive = true
@@ -106,18 +123,17 @@ class ArticleTableViewCell: UITableViewCell {
         imageViewHeight.isActive = true
     }
     // MARK: - Model injection
-    func configure(model: Article) {//, imageService: DownloadImageServiceProtocol) {
-        dateLabel.text = Date.ptBRFormatter.string(from: model.publishedAt ?? Date()) 
-        titleLabel.text = model.title
+    func configure(model: Article) {
+        dateLabel.text = Date.ptBRFormatter.string(from: model.publishedAt ?? Date())
+        titleLabel.text = model.title ?? "no info"
         descriptionLabel.text = model.description
         if let url = model.urlToImage {
             self.imageViewHeight.constant = 150
             newsImageView.downloadImage(from: url)
-
         }
     }
     
-    func configureFromCD(model: News) {//, imageService: DownloadImageServiceProtocol) {
+    func configureFromCD(model: News) {
         if let date = model.publishedAt {
             dateLabel.text = Date.ptBRFormatter.string(from: date)
         }
@@ -129,7 +145,11 @@ class ArticleTableViewCell: UITableViewCell {
         }
     }
 
-    @objc func buttonPressed(sender: Any) {
-        self.buttonAction?(sender)
+    @objc func pressRightBUtton() {
+        self.buttonAction?()
+    }
+    
+    @objc func pressDeleteButton() {
+        self.buttonCommentAction?()
     }
 }
