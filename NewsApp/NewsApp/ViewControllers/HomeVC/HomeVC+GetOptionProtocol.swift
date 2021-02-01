@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol GetOptionProtocol {
+protocol GetOptionProtocol: class {
     func getOption(option: String)
 }
 

@@ -9,6 +9,7 @@ import UIKit
 import CoreData
 
 class ArchiveVC: UIViewController {
+    //MARK: Views
     private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ArticleTableViewCell.self, forCellReuseIdentifier: "cell2")
@@ -16,29 +17,29 @@ class ArchiveVC: UIViewController {
         tableView.backgroundColor = .clear
         return tableView
     }()
-    
+    //MARK: Properties
     var context = CoreDataManger.sharedInstance.context
     var dataSource = CoreDataManger.sharedInstance.newsCoreData
     let nc = NotificationCenter.default
-
+    //MARK: Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         loadArticlesFromCD()
         nc.addObserver(self, selector: #selector(updateTableView), name: Notification.Name("ArticleSaved"), object: nil)
     }
-    
+    //MARK: Methods
     func loadArticlesFromCD() {
         CoreDataManger.sharedInstance.loadArticles()
         dataSource = CoreDataManger.sharedInstance.newsCoreData
         tableView.reloadData()
     }
-    
+    //MARK: Selectors
     @objc func updateTableView() {
         loadArticlesFromCD()
     }
 }
-
+    //MARK: Setup View Layout
 extension ArchiveVC {
     func setupView() {
         view.backgroundColor = .white
@@ -56,8 +57,8 @@ extension ArchiveVC {
         tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
     }
 }
-
-extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
+    //MARK: TableView DataSource
+extension ArchiveVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
@@ -68,7 +69,7 @@ extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! ArticleTableViewCell
         cell.saveNewsButton.setImage(UIImage(systemName: "trash"), for: .normal)
         cell.commentsButton.isHidden = false
-        cell.buttonAction = {  
+        cell.buttonAction = { 
             let item = self.dataSource[indexPath.row]
             
             self.context.delete(item)
@@ -76,19 +77,34 @@ extension ArchiveVC: UITableViewDelegate, UITableViewDataSource {
                 try self.context.save()
             }catch _ {
             }
-            CoreDataManger.sharedInstance.loadArticles()
-            self.dataSource = CoreDataManger.sharedInstance.newsCoreData
-            tableView.reloadData()
+            self.updateTableView()
         }
         cell.buttonCommentAction = {
-            let vc = CommentsVC()
-            vc.newsIndex = indexPath.row
-            self.navigationController?.pushViewController(vc, animated: true)
+            let isUsingPassword = UserDefaults.standard.bool(forKey: "usePassword")
+            if (isUsingPassword) == true {
+                Alerts.showEnterPasswordAlert(viewController: self, titleMessage: "Password", message: "Enter password") { (result) in
+                    if result {
+                        self.navigateToCommentsVC(indexOfCell: indexPath.row)
+                    } else {
+                        Alerts.showMessageAlert(viewController: self, titleMessage: "Wrong password", message: "Try to re-enter or change password")
+                    }
+                }
+            } else {
+                self.navigateToCommentsVC(indexOfCell: indexPath.row)
+            }
         }
         cell.configureFromCD(model: news)
         return cell
     }
     
+    func navigateToCommentsVC(indexOfCell: Int) {
+        let vc = CommentsVC()
+        vc.newsIndex = indexOfCell
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension ArchiveVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = ArticleVC()

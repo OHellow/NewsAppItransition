@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol HeaderDelegate {
+protocol HeaderDelegate: class {
     func getTitles()
 }
 

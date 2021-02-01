@@ -16,7 +16,7 @@ class HeaderCellView: UITableViewHeaderFooterView {
         return label
     }()
     
-    var delegate: HeaderDelegate?
+    weak var delegate: HeaderDelegate?
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

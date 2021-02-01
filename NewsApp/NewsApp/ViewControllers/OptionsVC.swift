@@ -19,7 +19,7 @@ class OptionsVC: UIViewController {
     let url_constructor = URL_Constructor()
     var dataSource = [String]()
     var isSources = false
-    var delegate: GetOptionProtocol?
+    weak var delegate: GetOptionProtocol?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,11 +31,14 @@ class OptionsVC: UIViewController {
     
     func fetchSources() {
         guard let url = url_constructor.requestSources() else {return}
-        articleManager.fetchSources(from: url) { (result) in
+        articleManager.makeNewsRequest(from: url) { (result: Result<NewsPublishers, SearchForNewsError>) in
             switch result {
-            case .success(let publishers):
-                for publisher in publishers {
-                    self.dataSource.append(publisher.id ?? "no info")
+            case .success(let articles):
+                guard let sources = articles.sources else {
+                    return
+                }
+                for source in sources {
+                    self.dataSource.append(source.id ?? "no info")
                 }
                 DispatchQueue.main.async {
                     self.tableView.reloadData()

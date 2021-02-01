@@ -134,15 +134,17 @@ class HomeVC: UIViewController {
                                                     source: source,
                                                     filter: filter,
                                                     page: page) else {return}
-        //print(url)
-        articleManager.fetchArticles(from: url) { (result) in
+        
+        articleManager.makeNewsRequest(from: url) { (result: Result<NewsResponse, SearchForNewsError>) in
             switch result {
             case .success(let articles):
+                guard let articles = articles.articles else {return}
                 DispatchQueue.global().async {
                     //print(articles.count)
-                    if articles.count == 0 {
+                    if  articles.count == 0 {
                         self.noAvaiableNews = true
                     }
+                    //articles.articles
                     self.dataSource.append(contentsOf: articles)
                     self.isSearching = false
                     DispatchQueue.main.async {
