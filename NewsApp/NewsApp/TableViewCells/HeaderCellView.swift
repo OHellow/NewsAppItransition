@@ -8,6 +8,7 @@
 import UIKit
 
 class HeaderCellView: UITableViewHeaderFooterView {
+    //MARK: Views
     let titleLabel = UILabel()
     let arrowLabel: UILabel = {
         let label = UILabel()
@@ -17,10 +18,9 @@ class HeaderCellView: UITableViewHeaderFooterView {
     }()
     
     weak var delegate: HeaderDelegate?
-    
+    //MARK: Life cycle
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .systemBlue
         let marginGuide = contentView.layoutMarginsGuide
         contentView.backgroundColor = UIColor(red: 52/255, green: 59/255, blue: 70/255, alpha: 1)
         // Arrow label

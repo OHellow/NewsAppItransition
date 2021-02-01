@@ -27,11 +27,13 @@ class NetworkService {
                 completion(.failure(.networkingError))
                 return
             }
-            let news: T? = self.decodeJSON(data)
-            if let news = news {
-                completion(.success(news))
-            } else {
-                completion(.failure(.networkingError))
+            DispatchQueue.global().async {
+                let news: T? = self.decodeJSON(data)
+                if let news = news {
+                    completion(.success(news))
+                } else {
+                    completion(.failure(.networkingError))
+                }
             }
         }.resume()
     }
@@ -43,6 +45,7 @@ class NetworkService {
         } catch {
             return nil
         }
+        
     }
 }
 //    func parseArticles(_ data: Data) -> [Article]? {

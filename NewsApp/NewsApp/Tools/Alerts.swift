@@ -24,6 +24,9 @@ enum Alerts {
             let password = alert?.textFields![0].text
             UserDefaults.standard.set(password, forKey: "password")
         }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak alert] (_) in
+          //print("Handle Cancel Logic here")
+          }))
         viewController.present(alert, animated: true, completion: nil)
     }
     

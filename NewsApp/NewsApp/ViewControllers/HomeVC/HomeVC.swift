@@ -61,6 +61,7 @@ class HomeVC: UIViewController {
     
     let articleManager = NetworkService()
     let url_constructor = URL_Constructor()
+    let nc = NotificationCenter.default
     var dataSource = [Article]()
 
     //MARK: Life cycle
@@ -69,6 +70,8 @@ class HomeVC: UIViewController {
         setupView()
         
         downloadNews(endpoint: endpoint, country: country, page: String(page))
+        
+        nc.addObserver(self, selector: #selector(showSuccessMessage), name: Notification.Name("ArticleSaved"), object: nil)
         
         searchController.searchBar.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -139,20 +142,19 @@ class HomeVC: UIViewController {
             switch result {
             case .success(let articles):
                 guard let articles = articles.articles else {return}
-                DispatchQueue.global().async {
-                    //print(articles.count)
-                    if  articles.count == 0 {
-                        self.noAvaiableNews = true
-                    }
-                    //articles.articles
-                    self.dataSource.append(contentsOf: articles)
-                    self.isSearching = false
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
+                //print(articles.count)
+                if  articles.count == 0 {
+                    self.noAvaiableNews = true
+                }
+                //articles.articles
+                self.dataSource.append(contentsOf: articles)
+                self.isSearching = false
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
             case .failure(.networkingError):
                 print("ERROR")
+                Alerts.showMessageAlert(viewController: self, titleMessage: "Connection error", message: "")
             }
         }
     }
@@ -163,6 +165,10 @@ class HomeVC: UIViewController {
     
     @objc func switchChanged(sender: UISegmentedControl) {
         setupOptionsAndFetchNews()
+    }
+    
+    @objc func showSuccessMessage(sender: UISegmentedControl) {
+        Alerts.showMessageAlert(viewController: self, titleMessage: "Article saved", message: "")
     }
 }
 //MARK: Setup View Layout

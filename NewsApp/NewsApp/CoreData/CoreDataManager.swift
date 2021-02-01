@@ -28,8 +28,12 @@ class CoreDataManger {
         news.setValue("\(article.urlToImage ?? "")", forKeyPath: "urlToImage")
         news.setValue("\(article.url ?? "")", forKeyPath: "urlToWebsite")
         
-        saveContext()
-        notificationCenter.post(name: Notification.Name("ArticleSaved"), object: nil)
+        do {
+          try context.save()
+          notificationCenter.post(name: Notification.Name("ArticleSaved"), object: nil)
+        } catch let error {
+          print("Failed to create Person: \(error.localizedDescription)")
+        }
         print("SAVED")
     }
     

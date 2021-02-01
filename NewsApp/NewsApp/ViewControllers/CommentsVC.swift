@@ -68,7 +68,7 @@ extension CommentsVC: UITableViewDataSource {
         return cell
     }
 }
-
+//MARK: TextView delegate
 extension CommentsVC: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         let comment = self.dataSource[self.newsIndex].commentsArray[textView.tag]
